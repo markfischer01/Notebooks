@@ -1,0 +1,448 @@
+---
+title: Russell Wilson will win the Broncos a Super Bowl
+author: Mark Fischer
+date: '2022-04-10'
+slug: russell-wilson-will-win-the-broncos-a-super-bowl
+categories: []
+tags: []
+---
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)
+library(ggrepel)
+library(scales)
+library(cowplot)
+library(gt)
+```
+Man is it tough being a Broncos fan. Since Peyton Manning left after winning the Super Bowl in the 2015-2016 season, the Broncos have started 11 different QB's with a combined record of 39-58. I also struggle to mention the fact of 14-straight losses to the repulsive team in Kansas City. The Broncos are a storied franchise with multiple Super Bowl wins and is home to many great players, so something has to fall in their favor, right? Queue nine-time Pro Bowl and Super Bowl winning quarterback Russell Wilson. 
+
+Russell Wilson was drafted by the Seattle Seahawks in the third round of the 2012 NFL draft. He was the piece that Seattle needed to get them over the hump, leading them to consecutive Super Bowl appearances in 2013 and 2014 and routing the Denver Broncos in Super Bowl XLVIII. So, who is to say that Russ won't be the missing piece for the Broncos in 2022?
+
+The quarterbacks that the Broncos have been putting on the field since Manning left have not been the greatest. The Broncos have a lot of young talent on the offensive and defensive side of the ball and nobody under center has been able to take advantage of that. When Russ has talent around him, his numbers are near the top of the league. In 2016, Russ threw for 4,219 yards and 21 touchdowns with his favorite target being Doug Baldwin, who has a lot of comparisons to current Denver wide-out Jerry Jeudy. In 2020, Russ threw for 4,212 yards and had two 1,000 yards receivers in Tyler Lockett and D.k. Metcalf. Lockett and Metcalf are a couple of deep ball threats that have similar traits to Denver wide-outs Courtland Sutton, Tim Patrick, and K.J. Hamler. Russ has all the weapons he has ever wanted and a new head coach that loves to throw the ball in Denver. All of this mixed together makes for a supercharged Russell Wilson in 2022.
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+defense13 <- read_csv("defense13.csv") %>% mutate(Season = "2013") 
+
+defense14 <- read_csv("defense14.csv") %>% mutate(Season = "2014") 
+
+defense15 <- read_csv("defense15.csv") %>% mutate(Season = "2015") 
+
+defense16 <- read_csv("defense16.csv") %>% mutate(Season = "2016") 
+
+defense17 <- read_csv("defense17.csv") %>% mutate(Season = "2017") 
+
+defense18 <- read_csv("defense18.csv") %>% mutate(Season = "2018") 
+
+defense19 <- read_csv("defense19.csv") %>% mutate(Season = "2019") 
+
+defense20 <- read_csv("defense20.csv") %>% mutate(Season = "2020") 
+
+defense21 <- read_csv("defense21.csv") %>% mutate(Season = "2021") 
+
+
+defense <- bind_rows(defense13, defense14, defense15, defense16, defense17, defense18, defense19, defense20, defense21)
+
+passing13 <- read_csv("passing13.csv") %>% mutate(Season = "2013")
+
+passing14 <- read_csv("passing14.csv") %>% mutate(Season = "2014")
+
+passing15 <- read_csv("passing15.csv") %>% mutate(Season = "2015")
+
+passing16 <- read_csv("passing16.csv") %>% mutate(Season = "2016")
+
+passing17 <- read_csv("passing17.csv") %>% mutate(Season = "2017")
+
+passing18 <- read_csv("passing18.csv") %>% mutate(Season = "2018")
+
+passing19 <- read_csv("passing19.csv") %>% mutate(Season = "2019")
+
+passing20 <- read_csv("passing20.csv") %>% mutate(Season = "2020")
+
+passing21 <- read_csv("passing21.csv") %>% mutate(Season = "2021")
+
+
+passing <- bind_rows(passing13, passing14, passing15, passing16, passing17, passing18, passing19, passing20, passing21)
+```
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+passingstats <- passing %>% 
+  mutate(
+    Player=gsub("\\\\.*","",Player),
+    Player=gsub("\\*","",Player),
+    Player=gsub("\\+","",Player)
+    )
+```
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+starters <- passingstats %>% filter(GS >= 10) %>% rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+RussStats <- passingstats %>% 
+  filter(Player == 'Russell Wilson') %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+TeddyStats <- passingstats %>% 
+  filter(Player == 'Teddy Bridgewater', Season == '2021') %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+LockStats <- passingstats %>% 
+  filter(Player == 'Drew Lock', Season == "2020") %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+FlaccoStats <- passingstats %>% 
+  filter(Player == 'Joe Flacco', Season == '2019') %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+KeenumStats <- passingstats %>% 
+  filter(Player == 'Case Keenum', Season == '2018') %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+PaxtonStats <- passingstats %>% 
+  filter(Player == 'Paxton Lynch', Season == '2016') %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+TrevorStats1 <- passingstats %>% 
+  filter(Player == 'Trevor Siemian', Season == "2016") %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+TrevorStats2 <- passingstats %>% 
+  filter(Player == 'Trevor Siemian', Season == "2017") %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+BrockStats2 <- passingstats %>% 
+  filter(Player == 'Brock Osweiler', Season == "2015") %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+PeytStats1 <- passingstats %>% 
+  filter(Player == 'Peyton Manning', Season == "2015") %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+PeytStats2 <- passingstats %>% 
+  filter(Player == 'Peyton Manning', Season == "2014") %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+PeytStats3 <- passingstats %>% 
+  filter(Player == 'Peyton Manning', Season == "2013") %>% 
+  rename(TotalPassingYds = `Yds...12`) %>% 
+  select(Player, Season, TotalPassingYds, QBR)
+
+PeytStats <- bind_rows(PeytStats1, PeytStats2, PeytStats3)
+
+TrevorStats <- bind_rows(TrevorStats1, TrevorStats2)
+
+broncosqbs <- bind_rows(TeddyStats, PeytStats, BrockStats2, TrevorStats, LockStats, PaxtonStats, KeenumStats, FlaccoStats) %>% mutate(Team = "Broncos") %>% arrange(desc(TotalPassingYds))
+```
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+russ2020 <- RussStats %>% 
+  filter(Season == "2020")
+
+russ2013 <- RussStats %>% 
+  filter(Season == "2013")
+
+broncos2015 <- broncosqbs %>% 
+  filter(Season == "2015") 
+```
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+bar1 <- ggplot() + 
+  geom_bar(data=broncosqbs, aes(x=Season, weight=TotalPassingYds), fill = "#002244") + 
+  geom_bar(data=broncos2015, aes(x=Season, weight=TotalPassingYds), fill = "#FB4F14") +
+  scale_y_continuous(labels = comma, limits=c(0, 6000)) + 
+   labs(
+    x="Season", 
+    y="Passing Yards", 
+    title="The Broncos Dormant Offense", 
+    subtitle="The Broncos have had some dull offensive
+play since Peyton Manning left.", 
+    caption="Sports Reference | By Mark Fischer"
+    ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 8), 
+    plot.subtitle = element_text(size=10), 
+    panel.grid.minor = element_blank()
+    )
+
+
+bar2 <- ggplot() + 
+  geom_bar(data=RussStats, aes(x=Season, weight=TotalPassingYds), fill = "#002244") + 
+  geom_bar(data=russ2020, aes(x=Season, weight=TotalPassingYds), fill = "#69BE28") + 
+  geom_bar(data=russ2013, aes(x=Season, weight=TotalPassingYds), fill = "#69BE28") +
+  scale_y_continuous(labels = comma, limits=c(0, 6000)) +
+  labs(
+    x="Season", 
+    y="Passing Yards", 
+    title="Russ is an Elite Passer", 
+    subtitle="Russ has been near the top of the league in 
+passing yards throughout his career.", 
+    caption="Sports Reference | By Mark Fischer"
+    ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 8), 
+    plot.subtitle = element_text(size=10), 
+    panel.grid.minor = element_blank()
+    )
+
+plot_grid(bar1, bar2)
+```
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+brady <- starters %>% 
+  filter(Player == "Tom Brady")
+
+allen <- starters %>% 
+  filter(Player == "Josh Allen")
+
+mahomes <- starters %>% 
+  filter(Player == "Patrick Mahomes")
+
+good <- bind_rows(mahomes, brady, allen) %>% filter(Season == 2021)
+
+broclabel <- broncosqbs %>% filter(Player == "Peyton Manning" | Player == "Trevor Siemian" | Player == "Teddy Bridgewater")
+```
+All of the arguments against Russell Wilson are all the high-powered quarterbacks that reside in the AFC and not being able to compete with them. But that certainly isn't the case. Josh Allen and Patrick Mahomes are considered two of the best quarterbacks in the AFC, if not the NFL, and Russell Wilson is right up there with them in terms of passing yards. After the 2018 season, Russ had been in an upward trend until a thumb injury in 2021 that pretty much de-railed his whole season. You can expect Russ to be healthy and in top form at the start of the 2022 season.
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+ggplot() + 
+  geom_line(data=starters, aes(x=Season, y=TotalPassingYds, group=Player), color="light grey") +
+  geom_line(data=mahomes, aes(x=Season, y=TotalPassingYds, group=Player), color="#E31837") +
+  geom_point(data=mahomes, aes(x=Season, y=TotalPassingYds, group=Player), color="#E31837") +
+  geom_line(data=allen, aes(x=Season, y=TotalPassingYds, group=Player), color="#00338D") +
+  geom_point(data=allen, aes(x=Season, y=TotalPassingYds), color="#00338D") +
+  geom_line(data=brady, aes(x=Season, y=TotalPassingYds, group=Player), color="#34302B") +
+  geom_point(data=brady, aes(x=Season, y=TotalPassingYds), color="#34302B") +
+  geom_line(data=broncosqbs, aes(x=Season, y=TotalPassingYds, group=Player), color="#FB4F14") +
+  geom_point(data=broncosqbs, aes(x=Season, y=TotalPassingYds), color="#FB4F14") + 
+  geom_line(data=RussStats, aes(x=Season, y=TotalPassingYds, group=Player), color="#69BE28") +
+  geom_point(data=RussStats, aes(x=Season, y=TotalPassingYds), color="#69BE28") +
+  geom_text_repel(data=broclabel, aes(x=Season, y=TotalPassingYds, label=Player)) +
+  geom_text_repel(data=good, aes(x=Season, y=TotalPassingYds, label=Player)) +
+  labs(
+    x="Season", 
+    y="Total Passing Yards", 
+    title="The League at a Glimpse", 
+    subtitle="Russell Wilson sits right up there with the best QB's in the league.", 
+    caption="Sports Reference | By Mark Fischer"
+    ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 8), 
+    plot.subtitle = element_text(size=10), 
+    panel.grid.minor = element_blank()
+    )
+```
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+SPdefense13 <- defense13 %>% 
+  mutate(
+    PPG = PA/G
+  ) %>% 
+  select(
+    Tm, PPG, TotalYds
+  )
+
+SPdefense15 <- defense15 %>% 
+  mutate(
+    PPG = PA/G
+  ) %>% 
+  select(
+    Tm, PPG, TotalYds
+  )
+
+SPdefense21 <- defense21 %>% 
+  mutate(
+    PPG = PA/G
+  ) %>% 
+  select(
+    Tm, PPG, TotalYds
+  )
+
+seattledefense <- SPdefense13 %>% 
+  filter(Tm == "Seattle Seahawks")
+
+broncosdefense <- SPdefense15 %>% 
+  filter(Tm == "Denver Broncos")
+
+currentdefense <- SPdefense21 %>% 
+  filter(Tm == "Denver Broncos")
+```
+One of the biggest pieces of the puzzle in terms of winning a Super Bowl is defense. When Russ won a Super Bowl with Seattle in 2013 they had one of the best defensive units in the history of the game. The "legion of boom" was a big reason why the Seahawks were so dominant. The story is the same with the Denver Broncos in 2015. Peyton Manning was at the end of his career and didn't even play in the playoffs until the Super Bowl game due to an injury. You basically couldn't move the ball against that Denver defense and it won them their third Super Bowl. The defensive squad in Denver right now is, once again, very dominant. In the 2021 season, they ranked third in terms of points allowed per-game. They are returning almost everyone on that defense in 2022 and are expecting multiple linebackers to return from injury, which was one of their main issues last season. With a renewed high-powered offense the Broncos will be able to outscore anyone in the league. 
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+SP1 <- ggplot() + 
+  geom_point(data=SPdefense13, aes(x=PPG, y=TotalYds), color = "grey") + 
+  geom_point(data=seattledefense, aes(x=PPG, y=TotalYds), color = "#69BE28") +
+  labs(
+    x="Points Allowed Per Game", 
+    y="Total Yards Allowed", 
+    title="Seattle 2013 Defense", 
+    subtitle="Seattle had the best overall defense in
+their 2013 Super Bowl run.", 
+    caption="Sports Reference | By Mark Fischer"
+    ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 8), 
+    plot.subtitle = element_text(size=10), 
+    panel.grid.minor = element_blank()
+    )
+
+SP2 <- ggplot() + 
+  geom_point(data=SPdefense15, aes(x=PPG, y=TotalYds), color = "grey") + 
+  geom_point(data=broncosdefense, aes(x=PPG, y=TotalYds), color = "#FB4F14") + 
+  labs(
+    x="Points Allowed Per Game", 
+    y="Total Yards Allowed", 
+    title="Denver 2015 Defense", 
+    subtitle="The Broncos were shutting down opposing 
+offenses in their 2015 Super Bowl campaign.", 
+    caption="Sports Reference | By Mark Fischer"
+    ) + 
+  theme_minimal() + 
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 8), 
+    plot.subtitle = element_text(size=10), 
+    panel.grid.minor = element_blank()
+    )
+
+SP3 <- ggplot() + 
+  geom_point(data=SPdefense21, aes(x=PPG, y=TotalYds), color = "grey") + 
+  geom_point(data=currentdefense, aes(x=PPG, y=TotalYds), color = "#FB4F14") + 
+  labs(
+    x="Points Allowed Per Game", 
+    y="Total Yards Allowed", 
+    title="Denver 2021 Defense", 
+    subtitle="Although the Broncos missed the playoffs 
+last year, they had a top three defense on the field.", 
+    caption="Sports Reference | By Mark Fischer"
+    ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 8), 
+    plot.subtitle = element_text(size=10), 
+    panel.grid.minor = element_blank()
+    )
+
+plot_grid(SP1, SP2, SP3)
+```
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+champ13 <- defense13 %>% 
+  filter(Tm == "Seattle Seahawks") %>% 
+  mutate(PPG = PA/G) %>% 
+  select(Tm, PPG, TotalYds, Season)
+
+champ14 <- defense14 %>% 
+  filter(Tm == "New England Patriots") %>% 
+  mutate(PPG = PA/G) %>% 
+  select(Tm, PPG, TotalYds, Season)
+
+champ15 <- defense15 %>% 
+  filter(Tm == "Denver Broncos") %>% 
+  mutate(PPG = PA/G) %>% 
+  select(Tm, PPG, TotalYds, Season)
+
+champ16 <- defense16 %>% 
+  filter(Tm == "New England Patriots") %>% 
+  mutate(PPG = PA/G) %>% 
+  select(Tm, PPG, TotalYds, Season)
+
+champ17 <- defense17 %>% 
+  filter(Tm == "Philadelphia Eagles") %>% 
+  mutate(PPG = PA/G) %>% 
+  select(Tm, PPG, TotalYds, Season)
+
+champ18 <- defense18 %>% 
+  filter(Tm == "New England Patriots") %>% 
+  mutate(PPG = PA/G) %>% 
+  select(Tm, PPG, TotalYds, Season)
+
+champ19 <- defense19 %>% 
+  filter(Tm == "Kansas City Chiefs") %>% 
+  mutate(PPG = PA/G) %>% 
+  select(Tm, PPG, TotalYds, Season)
+
+champ20 <- defense20 %>% 
+  filter(Tm == "Tampa Bay Buccaneers") %>% 
+  mutate(PPG = PA/G) %>% 
+  select(Tm, PPG, TotalYds, Season)
+
+champ21 <- defense21 %>% 
+  filter(Tm == "Los Angeles Rams") %>% 
+  mutate(PPG = PA/G) %>% 
+  select(Tm, PPG, TotalYds, Season)
+
+denver21 <- defense21 %>% 
+  filter(Tm == "Denver Broncos") %>% 
+  mutate(PPG = PA/G) %>% 
+  select(Tm, PPG, TotalYds, Season)
+
+champs <- bind_rows(champ13, champ14, champ15, champ16, champ17, champ18, champ19, champ20, champ21, denver21)
+```
+The last nine Super Bowl-winning defenses have all been very dominant. The Denver defense last season had the potential of being a championship defense. The only thing that they didn't have? A quarterback. If you look at the table below, all of these teams had elite quarterbacks and they all had elite defenses. Russell Wilson is that missing piece. 
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+champs %>% 
+  select(Tm, Season, PPG, TotalYds) %>%
+  gt() %>% 
+  cols_label(
+    PPG = "Points Allowed Per Game",
+    TotalYds = "Total Yards Allowed",
+    Tm = "Team"
+  ) %>%
+  tab_header(
+    title = "Does Denver's Defense Stack Up With the Best?",
+    subtitle = "The last nine championship defenses look a lot like what Denver has coming to play next season."
+  ) %>% tab_style(
+    style = cell_text(color = "black", weight = "bold", align = "left"),
+    locations = cells_title("title")
+  ) %>% tab_style(
+    style = cell_text(color = "black", align = "left"),
+    locations = cells_title("subtitle")
+  ) %>%
+  tab_source_note(
+    source_note = md("**By:** Mark Fischer  |  **Source:** Sports Reference")
+  ) %>%
+  tab_style(
+     locations = cells_column_labels(columns = everything()),
+     style = list(
+       cell_borders(sides = "bottom", weight = px(3)),
+       cell_text(weight = "bold", size=12)
+     )
+   ) %>%
+  opt_row_striping() %>% 
+  opt_table_lines("none") %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#002244"),
+      cell_text(color = "#69BE28")
+      ),
+    locations = cells_body(
+      rows = Tm == "Seattle Seahawks")
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#002244"),
+      cell_text(color = "#FB4F14")
+      ),
+    locations = cells_body(
+      rows = Tm == "Denver Broncos")
+  )
+```
+The Denver Broncos will be an exciting team to watch in this upcoming season. Will history repeat itself? I think so. Will Russell Wilson win a Super Bowl in Denver? I think so. In one year? Maybe. Two? Certainly. Back-to-back? I can only pray. 
+
+The code for this website can be found [here].
