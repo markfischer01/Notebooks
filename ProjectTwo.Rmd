@@ -232,4 +232,4 @@ Fair. The 2021 Red Sox did score a bunch of runs. But, it wasn't as many runs as
 
 I am definitely not complaining about how far the Red Sox went last year. Being a Red Sox fan, it was awesome to watch. But, sometimes you just have to sit back and make sense of what you are watching. I believe that the harder you work, the luckier you get. And the young core that the Red Sox have are determined to bring a championship back to the great city of Boston.
 
-The code for the post can be found [here].
+The code for the post can be found [here](https://github.com/markfischer01/Notebooks/blob/main/ProjectTwo.Rmd).
