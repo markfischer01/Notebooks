@@ -1,0 +1,235 @@
+---
+title: Were the 2021 Red Sox, Dare I Say, Lucky?
+author: Mark Fischer
+date: '2022-05-01'
+slug: were-the-2021-red-sox-dare-i-say-lucky
+categories: []
+tags: []
+---
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)
+library(baseballr)
+library(ggrepel)
+library(ggalt)
+library(gt)
+```
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+ALWCbatting <- read_csv("BostonALWCBatting.csv") %>% mutate(Season = 2021)
+
+ALWCpitching <- read_csv("BostonALWCPitching.csv") %>% mutate(Season = 2021)
+
+ALDSbatting <- read_csv("BostonALDSBatting.csv") %>% mutate(Season = 2021)
+
+ALDSpitching <- read_csv("BostonALDSPitching.csv") %>% mutate(Season = 2021)
+
+ALCSbatting <- read_csv("BostonALCSBatting.csv") %>% mutate(Season = 2021)
+
+ALCSpitching <- read_csv("BostonALCSPitching.csv") %>% mutate(Season = 2021)
+
+batting21 <- read_csv("21TeamBatting.csv") %>% mutate(Season = 2021) %>% mutate (RPG = R/G)
+
+pitching21 <- read_csv("21TeamPitching.csv") %>% mutate(Season = 2021) %>% mutate (RPG = R/G, HPG = H/G)
+
+batting20 <- read_csv("20teambatting.csv") %>% mutate(Season = 2020)  %>% mutate (RPG = R/G)
+
+pitching20 <- read_csv("20teampitching.csv") %>% mutate(Season = 2020) %>% mutate (RPG = R/G, HPG = H/G)
+
+batting19 <- read_csv("19teambatting.csv") %>% mutate(Season = 2019) %>% mutate (RPG = R/G)
+
+pitching19 <- read_csv("19teampitching.csv") %>% mutate(Season = 2019) %>% mutate (RPG = R/G, HPG = H/G)
+
+batting18 <- read_csv("18teambatting.csv") %>% mutate(Season = 2018) %>% mutate (RPG = R/G)
+
+pitching18 <- read_csv("18teampitching.csv") %>% mutate(Season = 2018) %>% mutate (RPG = R/G, HPG = H/G)
+
+batting17 <- read_csv("17teambatting.csv") %>% mutate(Season = 2017) %>% mutate (RPG = R/G)
+
+pitching17 <- read_csv("17teampitching.csv") %>% mutate(Season = 2017) %>% mutate (RPG = R/G, HPG = H/G)
+
+batting16 <- read_csv("16teambatting.csv") %>% mutate(Season = 2016) %>% mutate (RPG = R/G)
+
+pitching16 <- read_csv("16teampitching.csv") %>% mutate(Season = 2016) %>% mutate (RPG = R/G, HPG = H/G)
+
+batting15 <- read_csv("15teambatting.csv") %>% mutate(Season = 2015) %>% mutate (RPG = R/G)
+
+pitching15 <- read_csv("15teampitching.csv") %>% mutate(Season = 2015) %>% mutate (RPG = R/G, HPG = H/G)
+
+batting14 <- read_csv("14teambatting.csv") %>% mutate(Season = 2014) %>% mutate (RPG = R/G)
+
+pitching14 <- read_csv("14teampitching.csv") %>% mutate(Season = 2014) %>% mutate (RPG = R/G, HPG = H/G)
+
+batting13 <- read_csv("13teambatting.csv") %>% mutate(Season = 2013) %>% mutate (RPG = R/G)
+
+pitching13 <- read_csv("13teampitching.csv") %>% mutate(Season = 2013) %>% mutate (RPG = R/G, HPG = H/G)
+
+batting12 <- read_csv("12teambatting.csv") %>% mutate(Season = 2012) %>% mutate (RPG = R/G)
+
+pitching12 <- read_csv("12teampitching.csv") %>% mutate(Season = 2012) %>% mutate (RPG = R/G, HPG = H/G)
+
+teambatting <- bind_rows(batting21, batting20, batting19, batting18, batting17, batting16, batting15, batting14, batting13, batting12)
+
+teampitching <- bind_rows(pitching21, pitching20, pitching19, pitching18, pitching17, pitching16, pitching15, pitching14, pitching13, pitching12)
+
+alwcbat <- ALWCbatting %>% mutate(Name=gsub("\\\\.*","",Name))
+
+alwcpitch <- ALWCpitching %>% mutate(Name=gsub("\\\\.*","",Name))
+
+aldsbat <- ALDSbatting %>% mutate(Name=gsub("\\\\.*","",Name))
+
+aldspitch <- ALDSpitching %>% mutate(Name=gsub("\\\\.*","",Name))
+
+alcsbat <- ALCSbatting %>% mutate(Name=gsub("\\\\.*","",Name))
+
+alcspitch <- ALCSpitching %>% mutate(Name=gsub("\\\\.*","",Name))
+
+playoffbatting <- bind_rows(alwcbat, aldsbat, alcsbat)
+
+playoffpitching <- bind_rows(alwcpitch, aldspitch, alcspitch)
+
+teamBA <- teambatting %>% 
+  group_by(Tm, Season) %>% 
+  select(Tm, Season, OBP, RPG)
+
+redsox <- teamBA %>% 
+  filter(Tm == "Boston Red Sox")
+
+redsox21 <- teamBA %>% 
+  filter(Tm == "Boston Red Sox") %>% 
+  filter(Season == "2021")
+
+redsoxchamp <- teamBA %>% 
+  filter(Tm == "Boston Red Sox") %>% 
+  filter(Season == "2018") 
+
+redsoxchamp1 <- teamBA %>% 
+  filter(Tm == "Boston Red Sox") %>% 
+  filter(Season == "2013")
+
+redsoxpitch <- teampitching %>% 
+  filter(Tm == "Boston Red Sox") %>%
+  select(Tm, Season, `RA/G`, HPG)
+
+bostonbatting <- teambatting %>% 
+  filter(Tm == "Boston Red Sox") %>%
+  filter(Season == "2021" | Season == "2018" | Season == "2017" | Season == "2016" | Season == "2013") %>%
+  select(Tm,Season, R, H, BA, OPS)
+```
+
+Over the last four years, the Boston Red Sox have been one of the most inconsistent teams in the MLB. In 2018, they won the World Series against the Los Angeles Dodgers in a quick five game series. They followed that up with missing the playoffs entirely in 2019, going 84-78, and then finishing last in the AL East with a 24-36 record in 2020. Also during that span, the Red Sox fired Manager Alex Cora after the 2018 season and then re-hired him for the 2021 season. 
+
+The 2021 season for the Red Sox was, you guessed it, very inconsistent. They finished the year with a 92-70 record, just eight games behind the AL East champion Tampa Bay and tied with division rival New York. But it didn't feel like a 92 win season. Fenway Park didn't sell out until mid-June due to the crowd restrictions made for COVID-19. The Red Sox swept the Yankees at Fenway for the first time since 2011, but then gave up eight home runs in a single game to Toronto the very next series. This was the most home runs hit by an away team at Fenway... EVER. This is exactly what the Red Sox were facing the entire 2021 campaign. 
+
+As October was inching closer, Tampa Bay was in the drivers seat of the AL East, but the wild card race was red hot. Boston and New York finished with the exact same record and Toronto was just one game back from the Yankees. ONE game. Due to head-to-head wins, Boston was the home team of a one-game Wild Card series with the Yankees. Two home runs from Bogearts and Schwarber, a rare, poor performance from Gerrit Cole, and the crowd at Fenway helped the Red Sox move in to the ALDS.
+
+Queue Kiké Hernandez. The hottest hitter on the planet during October 2021. In the ALDS, he had a batting average of .450 with nine hits in just 20 at-bats. Five of those at-bats resulted in an extra base hit, two being home runs. He was unstoppable. 
+
+As the Red Sox moved their way past Tampa Bay, the road stopped in the ALCS. Kiké was still hot, hitting .385 with three more home runs. But that wasn't enough to get them past the Astros. Looking back on the season, I don't believe that the Red Sox deserved to make it that far. They live in the postseason, but was it meant to be their home last year?
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+ggplot() + geom_point(data=teamBA, aes(x=OBP, y=RPG), color = "light grey") +
+  geom_point(data = redsox, aes(x=OBP, y=RPG), color = "#BD3039") +
+  geom_point(data = redsoxchamp, aes(x=OBP, y=RPG), color = "gold") +
+  geom_point(data = redsoxchamp1, aes(x=OBP, y=RPG), color = "gold") +
+  geom_text_repel(data = redsox21, aes(x=OBP, y=RPG, label=Season), color = "black") +
+  geom_text_repel(data = redsoxchamp, aes(x=OBP, y=RPG, label=Season), color = "black") +
+  geom_text_repel(data = redsoxchamp1, aes(x=OBP, y=RPG, label=Season), color = "black") +
+  geom_vline(xintercept = .32) +
+  geom_hline(yintercept = 4.5) +
+  theme_minimal() +
+  labs(title="The 2021 Red Sox ... Were They Lucky?", subtitle = "The Red Sox usually live in the postseason, but were their stats in 2021 up to par with thier other
+postseason runs?",  x="On Base Percentage", y="Runs per Game", caption = "By: Mark Fischer | Source: Baseball Reference") + 
+  theme_minimal() + 
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 8), 
+    plot.subtitle = element_text(size=10), 
+    panel.grid.minor = element_blank()
+    )
+```
+
+This chart represents all of the teams in the MLB over the last ten seasons. Highlighted in red are the ten Boston teams with their two World Series winning teams highlighted in gold. You are probably wondering what two teams put up the same production as the World Series winning teams? The two other times the Red Sox have made the playoffs. In 2016 and 2017 the Red Sox looked identical to the World Series teams. 
+
+The runs per game and on base percentage in 2021 was nowhere near the same production that they were putting up in their other playoff appearances. This will make you think a little bit. How on earth did the Red Sox make it as far as the ALCS? Maybe their pitching was just that good? Lets take a look. 
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+ggplot() + 
+  geom_dumbbell(
+    data=redsoxpitch, 
+    aes(y=reorder(Season, `RA/G`), x=`RA/G`, xend=HPG),
+    size = 2,
+    colour = "grey",
+    colour_x = "#BD3039",
+    colour_xend = "#0C2340") +
+  theme_minimal() +
+  labs(title="Pitching Tells the Same Story", subtitle = "On a per game basis, the Red Sox gave up more runs(red) and more hits(blue) 
+in 2021 than they did in their World Series runs.",  x="", y="", caption = "By: Mark Fischer | Source: Baseball Reference") + 
+  theme_minimal() + 
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 8), 
+    plot.subtitle = element_text(size=10), 
+    panel.grid.minor = element_blank()
+    )
+```
+
+When you look at this chart, the red dots are how many runs the Red Sox gave up per game in the regular season. The blue dot is how many hits they gave up per game. So, the shorter the line, the better. We've talked about 2018 and 2013 when the Red Sox made it all the way to the World Series. Their other playoff births in 2016 and 2017 are right up there with the World Series teams. And then there is the 2021 team. Right in the middle of the pack. 
+
+They gave up more runs per game in 2021 than they did in 2014 when their record was 71-91. They were also giving up almost a hit more per game than any of the other playoff teams during this span. This would make you think that the 2021 Red Sox just scored a bunch of runs and were beating teams in shootouts. Let's see if that is the case. 
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+bostonbatting %>% 
+  gt() %>% 
+  cols_label(
+    Tm = "Team",
+    Season = "Season",
+    R = "Runs",
+    H = "Hits",
+    BA = "BA",
+    OPS = "OPS"
+  ) %>%
+  tab_header(
+    title = "You Gotta Score to Win",
+    subtitle = "The 2021 Red Sox matched up with previous World Series teams except in the runs category."
+  ) %>% tab_style(
+    style = cell_text(color = "black", weight = "bold", align = "left"),
+    locations = cells_title("title")
+  ) %>% tab_style(
+    style = cell_text(color = "black", align = "left"),
+    locations = cells_title("subtitle")
+  ) %>%
+  tab_source_note(
+    source_note = md("**By:** Mark Fischer  |  **Source:** Baseball Reference")
+  ) %>%
+  tab_style(
+     locations = cells_column_labels(columns = everything()),
+     style = list(
+       cell_borders(sides = "bottom", weight = px(4)),
+       cell_text(weight = "bold", size=12)
+     )
+   ) %>%
+  opt_row_striping() %>% 
+  opt_table_lines("none") %>%
+    tab_style(
+      style = list(
+        cell_fill(color = "#BD3039"),
+        cell_text(color = "#0C2340")
+       ),
+      locations = cells_body(
+       rows = Season == "2018")
+   ) %>%
+    tab_style(
+      style = list(
+        cell_fill(color = "#BD3039"),
+        cell_text(color = "#0C2340")
+       ),
+      locations = cells_body(
+       rows = Season == "2013")
+   )
+```
+
+Fair. The 2021 Red Sox did score a bunch of runs. But, it wasn't as many runs as the last two teams to make it to the ALCS. This leads me to believe that they were just straight up lucky. Kiké was the hottest hitter on the planet and they ran in to some pitchers that weren't on top of their game. It was a perfect formula for a playoff run. 
+
+I am definitely not complaining about how far the Red Sox went last year. Being a Red Sox fan, it was awesome to watch. But, sometimes you just have to sit back and make sense of what you are watching. I believe that the harder you work, the luckier you get. And the young core that the Red Sox have are determined to bring a championship back to the great city of Boston.
+
+The code for the post can be found [here].
